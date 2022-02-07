@@ -1,0 +1,90 @@
+#player {
+    width: 100%;
+    height: 100%;
+}
+
+#mirror {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#queue{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.75);  
+    backdrop-filter: blur(10px);
+}
+
+
+#mirror-black {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+.mirror-black-black {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.95);
+}
+
+.mirror-black-black-black {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgb(0, 0, 0);
+}
+
+.stop-next-button {
+    &:active {
+        color:gray !important;
+    }
+}
+
+.now-playing {
+    background-color: rgba(255, 255, 255, .25);  
+    backdrop-filter: blur(5px);
+   }
+
+   .song-name-result{
+       &:hover {
+           color: #198754 !important;
+       }
+   }
+
+   /* Scroll 3 */
+.sc3::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .sc3::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 10px;
+  }
+  .sc3::-webkit-scrollbar-thumb {
+    background-color: rgba(102, 102, 102, 0.4);
+    border-radius: 10px;
+  }
+
+  @keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}

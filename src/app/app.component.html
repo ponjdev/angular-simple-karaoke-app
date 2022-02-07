@@ -1,0 +1,209 @@
+
+<div style="width: 100vw;height: calc(100vh - 80px);overflow: hidden;">
+  <div id="player"></div>
+</div>
+<div id="mirror"></div>
+<div id="mirror-black" *ngIf="isBlack"></div>
+<div class="mirror-black-black" *ngIf="currentPlay !== null && isPlaying === false"></div>
+<div class="mirror-black-black-black d-flex justify-content-center align-items-center text-dark" *ngIf="currentPlay === null"> </div>
+
+
+<div class="container-fluid position-absolute d-flex flex-column align-items-center justify-content-between p-0"
+  style="top: 0px;left: 0px;height: 100vh;width: 100vw;">
+  <div class="w-100">
+    <div class="mt-5 position-relative" style="padding-left: 5rem;
+    padding-right: 5rem;">
+      <input type="text" class="w-100 px-3 text-white rounded shadow border border-secondary" style="
+      border: none;
+      height: 50px;
+      font-size: 2rem;
+      background-color: rgba(255, 255, 255, .15);
+      backdrop-filter: blur(5px);
+  " [(ngModel)]="q" (keyup.enter)="onSearch()" (focus)="isBlack = true" (blur)="onSearchBoxBlur()"
+        placeholder="ค้นหาเพลง..">
+ 
+      <p *ngIf="isBlack" class="text-white mt-3"><i class="fas fa-info-circle me-2"></i>พิมพ์ชื่อเพลงแล้วกด Enter
+        เพื่อค้นหา</p>
+
+    </div>
+
+    <div *ngIf="isBlack" class="w-100 mt-5" style="padding-left: 5rem;
+    padding-right: 5rem;">
+      <!-- 
+    <div class="mb-3 text-white">
+      ค้นหา "{{q}}" พบ {{searchLists.length}} วิดิโอ
+    </div> -->
+
+    <div class="w-100" *ngIf="isSearching == true">
+      <h2 class="text-white">กำลังค้นหาเพลง...</h2>
+    </div>
+
+      <div class="w-100 sc3" style="max-height: 35vh;overflow-y: auto;" *ngIf="isSearching == false">
+        <div class="d-flex align-items-center mb-3" *ngFor="let item of searchLists">
+          <div class=" rounded-3 mx-3 pointer" (click)="addToQueue(item)"
+            style="width:100px;height:70px;background-position:center;background-size:cover;"
+            [ngStyle]="{'background-image': 'url(' + item.thumbnail.thumbnails[0].url + ')'}">
+          </div>
+          <div style="max-width:calc(100vw - 30rem);line-height: 1.75rem;font-size: 130%;">
+            <p class="text-truncate text-white fw-bold mb-0 pointer  song-name-result" (click)="addToQueue(item)">{{item.title}}</p>
+            <small><span class="text-white me-2 pointer"
+                (click)="addToQueue(item)">{{item.length.simpleText}}</span><span class="text-secondary">-
+                {{item.channelTitle}}</span></small>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+  <div style="height: 80px;box-shadow: -1px -9px 9px -1px rgba(0,0,0,0.51);
+  -webkit-box-shadow: -1px -9px 9px -1px rgba(0,0,0,0.51);
+  -moz-box-shadow: -1px -9px 9px -1px rgba(0,0,0,0.51);" class="bg-light w-100 d-flex align-items-center px-2">
+
+    <div class=" d-none d-md-flex  align-items-center ms-5 " *ngIf="currentPlay !== null">
+      <div class=" rounded mx-3 position-absolute "
+        style="width:80px;height:80px;background-position:center;background-size:cover;bottom:1rem;"
+        [ngStyle]="{'background-image': 'url(' + currentPlay.thumbnail.thumbnails[0].url + ')'}">
+      </div>
+      <div class="" style="max-width:250px;line-height: 1rem;margin-left: 110px;">
+        <p class="text-truncate fw-bold mb-0">{{currentPlay.title}}</p>
+        <small class="text-secondary">{{currentPlay.channelTitle}}</small>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center mx-5">
+      <div class="mx-2 stop-next-button pointer"  (click)="onReloadVideo()">
+        <i class="fas fa-redo-alt"></i>
+      </div>
+      <div class="bg-dark rounded-circle text-white mx-2 align-items-center d-flex justify-content-center pointer"
+        style="width:40px;height:40px" (click)="onPlayPause()">
+        <i class="fas fa-pause" *ngIf="isPlaying == true"></i>
+        <i class="fas fa-play" *ngIf="isPlaying == false"></i>
+
+      </div>
+      <div class="mx-2 stop-next-button pointer" (click)="onControlPlayer('next')">
+        <i class="fas fa-step-forward"></i>
+      </div>
+
+    </div>
+
+    <div class="flex-fill d-flex align-items-center">
+
+      <div class="me-3 d-none d-sm-block">
+        <small class="fw-bold">
+          {{currentPlayTime * 1000 | date:'mm:ss'}}
+        </small>
+      </div>
+
+      <div class="progress d-none d-lg-flex" style="width:100%;height: 6px;">
+        <div class="progress-bar bg-dark" role="progressbar" style="width: 100%"
+          [ngStyle]="{'width': currentPlayTimeProgress + '%'}" [attr.aria-valuenow]="currentPlayTimeProgress"
+          aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+
+      <div class="ms-3 d-none d-lg-block">
+        <small class="fw-bold">
+          {{currentTotalTime * 1000 | date:'mm:ss'}}
+        </small>
+      </div>
+    </div>
+
+    <div class="ms-5 me-5  stop-next-button pointer" (click)="isQueueOpen = true">
+      <i class="fas fa-list position-relative">
+        <small class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-pill bg-dark">
+          {{queueLists.length > 9 ? queueLists.length + '+' : queueLists.length}}
+        </small>
+      </i>
+    </div>
+  
+    <div>
+
+    </div>
+
+
+  </div>
+
+</div>
+
+<div id="queue" class="sc3" style="overflow-y: auto;" *ngIf="isQueueOpen" >
+
+  <div class="row mx-0 mt-5">
+    <div class="col-12 text-end">
+      <span class="fs-2 mx-5 pointer stop-next-button" (click)="isQueueOpen=false"><i class="fas fa-times"></i></span>
+    </div>
+  </div>
+
+  <div class="row  mx-0 ">
+    <div class="col-lg-4 d-flex align-items-center flex-column mt-5">
+
+      <div *ngIf="currentPlay !== null" class=" rounded-3 mb-3" style="width:300px;height:300px;background-position:center;background-size:cover;box-shadow: 0px 0px 100px 0px rgba(0,0,0,0.75);
+          -webkit-box-shadow: 0px 1px 99px 0px rgba(0,0,0,0.75);
+          -moz-box-shadow: 0px 1px 99px 0px rgba(0,0,0,0.75);"
+        [ngStyle]="{'background-image': 'url(' + currentPlay.thumbnail.thumbnails[0].url + ')'}">
+      </div>
+
+
+      <div class="d-flex align-items-center my-4 ">
+        <div class="mx-3 stop-next-button pointer" (click)="onReloadVideo()">
+          <i class="fas fa-redo-alt"></i>
+        </div>
+        <div class="bg-dark rounded-circle text-white mx-3 align-items-center d-flex justify-content-center pointer"
+          style="width:40px;height:40px" (click)="onPlayPause()">
+          <i class="fas fa-pause" *ngIf="isPlaying == true"></i>
+          <i class="fas fa-play" *ngIf="isPlaying == false"></i>
+
+        </div>
+        <div class="mx-3 stop-next-button pointer" (click)="onControlPlayer('next')">
+          <i class="fas fa-step-forward"></i>
+        </div>
+
+      </div>
+
+
+    </div>
+
+    <div class="col-lg-8 mt-5 px-5">
+
+      <div class="mb-5" *ngIf="currentPlay !== null">
+        <h1 class="mb-3">
+          กำลังเล่น
+        </h1>
+
+        <div class="bg-dark shadow p-4 text-white position-relative d-flex align-items-center justify-content-between"
+          style="border-radius: 10px;">
+          <h4  class="text-truncate"><i class="fas fa-music me-3"></i>{{currentPlay.title}}</h4>
+          <h4 class=" text-nowrap ms-5">{{currentPlayTime * 1000 | date:'mm:ss'}}<span class="text-secondary">/{{currentTotalTime * 1000 |
+              date:'mm:ss'}}</span></h4>
+          <div class="progress  position-absolute"
+            style="width:100%;height: 10px;left:0px;bottom: 0px;border-radius: 0px 0px 10px 10px;">
+            <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
+              [ngStyle]="{'width': currentPlayTimeProgress + '%'}" [attr.aria-valuenow]="currentPlayTimeProgress"
+              aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <h1 class="mb-3">
+          อยู่ในคิว <span class="ms-3">({{queueLists.length}} เพลง)</span>
+        </h1>
+        <h4 *ngIf="queueLists.length === 0">
+          เอ้า! ยังไม่มีเพลงในคิว ค้นหาและเพิ่มเพลงได้ที่หน้าแรก
+        </h4>
+
+        <div *ngIf="queueLists.length > 0">
+          <div *ngFor="let item of queueLists;let i = index"
+            class=" d-flex align-items-center justify-content-between p-3 " style="border-radius: 10px;">
+            <h4 class="text-truncate"><span class="me-4">{{i+1}}</span>{{item.title}}</h4>
+            <h4 class=" text-nowrap"><span class="mx-5">{{item.length.simpleText}}</span><span class="text-danger pointer  stop-next-button" (click)="onRemoveFromQueue(i)"><i class="fas fa-trash"></i></span></h4>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
